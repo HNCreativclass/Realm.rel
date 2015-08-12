@@ -1,6 +1,8 @@
+
+![image](https://github.com/gitdoapp/Realm.rel/blob/master/assets/logo.png?raw=true)
 # Realm.rel
 Realm.rel extends Realm models adding custom relationships getters.
-This library is hardly inspired in [Backbone.Rel](https://github.com/masylum/Backbone.Rel)
+This library is highly inspired in [Backbone.Rel](https://github.com/masylum/Backbone.Rel)
 
 ### Problem
 When you deal with multiple models locally that have dependencies between them, replicating these relationships in local can be a bit complex if the API you're you are fetching the data from doesn't return all the data you need to create models and set the relationships. It leads to multiple requests, and *temporary* models waiting for the relationship to be set. 
