@@ -45,8 +45,7 @@ extension RelObject where Self:Object {
     */
     func getRel<T: Object>(name: String) throws -> T? {
         let field = primaryKeyAttribute(forRelationship: name)
-        let mirror = Mirror(reflecting: self)
-        guard let primaryKey = mirror.children.filter({$0.label == field}).first?.value as? String else {
+        guard let primaryKey = (self as Object).valueForKey(field) else {
             throw RelObjectError.InvalidRelationship
         }
         return realm?.objectForPrimaryKey(T.self, key: primaryKey)
@@ -60,7 +59,7 @@ extension RelObject where Self:Object {
     */
     func setRel<T: Object>(relationship: T, name: String) throws {
         guard let primaryKey = T.primaryKey() else { throw RelObjectError.NoPrimaryKey }
-        guard let primaryKeyValue = (relationship as Object).valueForKey(primaryKey) as? String else { throw RelObjectError.NoPrimaryKeyValue }
+        let primaryKeyValue = (relationship as Object).valueForKey(primaryKey) as? String
         let field = primaryKeyAttribute(forRelationship: name)
         let mirror = Mirror(reflecting: self)
         guard let _ = mirror.children.filter({$0.label == field}).first?.value as? String else {
@@ -84,10 +83,10 @@ extension RelObject where Self:Object {
         }
         let field = primaryKeyAttribute(forRelationship: name)
         let mirror = Mirror(reflecting: self)
-        guard let _ = mirror.children.filter({$0.label == field}).first?.value as? String else {
+        guard let _ = mirror.children.filter({$0.label == field}).first?.value as? [String] else {
             throw RelObjectError.InvalidRelationship
         }
-        (self as Object).setValue(",".join(primaryKeysValues), forKey: field)
+        (self as Object).setValue(primaryKeysValues, forKey: field)
     }
     
     /**
@@ -99,12 +98,11 @@ extension RelObject where Self:Object {
     */
     func getRels<T: Object>(name: String) throws -> [T]  {
         let field = primaryKeyAttribute(forRelationship: name)
-        let mirror = Mirror(reflecting: self)
-        guard let primaryKeys = mirror.children.filter({$0.label == field}).first?.value as? String else {
+        guard let primaryKeys = (self as Object).valueForKey(field) as? [String] else {
             throw RelObjectError.InvalidRelationship
         }
         var objects: [T] = [T]()
-        for primaryKey in primaryKeys.componentsSeparatedByString(",") {
+        for primaryKey in primaryKeys {
             if let object = realm?.objectForPrimaryKey(T.self, key: primaryKey) {
                 objects.append(object)
             }
