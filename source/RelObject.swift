@@ -78,8 +78,8 @@ extension RelObject where Self:Object {
         var primaryKeysValues: [String] = [String]()
         for relationship in relationships {
             guard let primaryKey = T.primaryKey() else { continue }
-            guard let primaryKeyValue = (relationship as Object).valueForKey(primaryKey) as? String else { continue }
-            primaryKeysValues.append(primaryKeyValue)
+            let primaryKeyValue = (relationship as Object).valueForKey(primaryKey) as? String
+            primaryKeysValues.append(primaryKeyValue!)
         }
         let field = primaryKeyAttribute(forRelationship: name)
         let mirror = Mirror(reflecting: self)
